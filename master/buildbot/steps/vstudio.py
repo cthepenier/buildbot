@@ -415,7 +415,8 @@ class MsBuild4(VisualStudio):
         if self.platform is None:
             config.error('platform is mandatory. Please specify a string such as "Win32"')
 
-        command = ["%VCENV_BAT%",
+        command = ["cmd", "/c", 
+                   "%VCENV_BAT%",
                    "x86",
                    "&&",
                    "msbuild",
@@ -434,3 +435,6 @@ MsBuild = MsBuild4
 
 class MsBuild12(MsBuild4):
     vcenv_bat = "\"${VS120COMNTOOLS}..\\..\\VC\\vcvarsall.bat\""
+
+class MsBuild35(MsBuild4):
+    vcenv_bat = "\"${VS90COMNTOOLS}..\\..\\VC\\vcvarsall.bat\""
