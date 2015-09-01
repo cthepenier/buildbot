@@ -42,4 +42,4 @@ class Cloc(ShellCommand):
         if not done:
             return ["running", "cloc"]
 
-        return [self.name]
+        return self.description
