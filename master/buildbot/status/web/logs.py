@@ -89,7 +89,7 @@ class TextLog(Resource):
             if not self.asText:
                 # jinja only works with unicode, or pure ascii, so assume utf-8 in logs
                 if not isinstance(entry, unicode):
-                    entry = unicode(entry, 'utf-8', 'replace')
+                    entry = unicode(entry, 'cp850', 'replace')
                 first_entry = True
                 _type = logfile.ChunkTypes[type]
                 for ansi_entry in entry.split("\033["):
@@ -104,7 +104,7 @@ class TextLog(Resource):
                     first_entry = False
 
             elif not is_header:
-                text_data += entry
+                text_data += unicode(entry, 'cp850', 'replace')
 
         if self.asText:
             return text_data
