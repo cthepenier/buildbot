@@ -10,6 +10,7 @@ class FxCop(ShellCommand):
 
     name = "FxCop"
     haltOnFailure = True
+    warnOnWarnings = True
 
     def __init__(self, fxcop_path, project_path,**kwargs):
         self.warnings = 0
