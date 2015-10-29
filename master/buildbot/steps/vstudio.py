@@ -390,8 +390,9 @@ class MsBuild4(VisualStudio):
     platform = None
     vcenv_bat = "\"${VS110COMNTOOLS}..\\..\\VC\\vcvarsall.bat\""
 
-    def __init__(self, platform, **kwargs):
+    def __init__(self, platform, additionalProperties={}, **kwargs):
         self.platform = platform
+        self.additionalProperties = additionalProperties
         VisualStudio.__init__(self, **kwargs)
 
     def setupEnvironment(self, cmd):
@@ -425,6 +426,8 @@ class MsBuild4(VisualStudio):
                    "/p:Platform=%s" % (self.platform)]
         if self.project is not None:
             command.append("/t:%s" % (self.project))
+        for name, value in self.additionalProperties.iteritems():
+            command.append("/p:{0}={1}".format(name, value))
 
         self.setCommand(command)
 
