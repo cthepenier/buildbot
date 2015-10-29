@@ -102,9 +102,15 @@ class BaseParameter(object):
             if self.required:
                 raise ValidationError("'%s' needs to be specified" % (self.label))
             if self.multiple:
-                args = self.default
+                if hasattr(self.default, '__call__'):
+                    args = self.default()
+                else:
+                    args = self.default
             else:
-                args = [self.default]
+                if hasattr(self.default, '__call__'):
+                    args = [self.default()]
+                else:
+                    args = [self.default]
 
         if self.regex:
             for arg in args:
