@@ -389,10 +389,12 @@ VS2013 = VC12
 class MsBuild4(VisualStudio):
     platform = None
     vcenv_bat = "\"${VS110COMNTOOLS}..\\..\\VC\\vcvarsall.bat\""
+    renderables = ['additionalProperties']
 
-    def __init__(self, platform, additionalProperties={}, **kwargs):
+    def __init__(self, platform, verbosity='normal', additionalProperties={}, **kwargs):
         self.platform = platform
         self.additionalProperties = additionalProperties
+        self.verbosity = verbosity
         VisualStudio.__init__(self, **kwargs)
 
     def setupEnvironment(self, cmd):
@@ -423,7 +425,8 @@ class MsBuild4(VisualStudio):
                    "msbuild",
                    self.projectfile,
                    "/p:Configuration=%s" % (self.config),
-                   "/p:Platform=%s" % (self.platform)]
+                   "/p:Platform=%s" % (self.platform),
+                   "/v:%s" % self.verbosity]
         if self.project is not None:
             command.append("/t:%s" % (self.project))
         for name, value in self.additionalProperties.iteritems():
