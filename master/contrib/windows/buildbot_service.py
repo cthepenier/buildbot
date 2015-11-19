@@ -102,7 +102,7 @@ CHILDCAPTURE_MAX_BLOCKS = 200
 
 
 class BBService(win32serviceutil.ServiceFramework):
-    _svc_name_ = 'BuildBot'
+    _svc_name_ = 'BuildBotTest'
     _svc_display_name_ = _svc_name_
     _svc_description_ = 'Manages local buildbot slaves and masters - ' \
                         'see http://buildbot.sourceforge.net'
@@ -178,6 +178,9 @@ class BBService(win32serviceutil.ServiceFramework):
         else:
             dir_string = win32serviceutil.GetServiceCustomOption(self,
                                                                  "directories")
+            self.egg_cache = win32serviceutil.GetServiceCustomOption(self, 'eggcache')
+            if(self.egg_cache):
+                os.environ['PYTHON_EGG_CACHE'] = self.egg_cache
             save_dirs = False
 
         if not dir_string:
@@ -230,6 +233,8 @@ class BBService(win32serviceutil.ServiceFramework):
             hstop = self.hWaitStop
 
             cmd = '%s --spawn %d start --nodaemon %s' % (self.runner_prefix, hstop, bbdir)
+            if self.egg_cache:
+                cmd += ' --egg-cache %s' % self.egg_cache
             # print "cmd is", cmd
             h, t, output = self.createProcess(cmd)
             child_infos.append((bbdir, h, t, output))
@@ -542,6 +547,12 @@ def DetermineRunner(bbdir):
 
 def HandleCommandLine():
     if len(sys.argv) > 1 and sys.argv[1] == "--spawn":
+        with open('c:/temporary/args', 'w') as log:
+            log.write(' '.join(sys.argv))
+            if len(sys.argv) > 6 and sys.argv[6] == '--egg-cache':
+                log.write('\n' + sys.argv[7])
+                os.environ['PYTHON_EGG_CACHE'] = sys.argv[7]
+                del sys.argv[6:]
         # Special command-line created by the service to execute the
         # child-process.
         # First arg is the handle to wait on
